@@ -130,11 +130,7 @@ def submit_details(first_name, last_name, work_email, organization_name, contact
         return {
             "status": "error",
             "message": "Error saving request"
-        }   
-
-
-
-
+        }
 @frappe.whitelist()
 def toggle_registration_status(registration_id, status):
     validate_super_admin()
@@ -154,3 +150,4 @@ def toggle_registration_status(registration_id, status):
         "status": "success",
         "message": f"Status updated to {status} successfully."
     }
+

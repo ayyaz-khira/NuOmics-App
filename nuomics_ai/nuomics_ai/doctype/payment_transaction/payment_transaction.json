@@ -41,7 +41,7 @@
    "options": "Pending\nSuccess\nFailed"
   },
   {
-   "default": "PayU",
+   "default": "Razorpay",
    "fieldname": "payment_gateway",
    "fieldtype": "Data",
    "label": "Payment Gateway"

@@ -8,16 +8,7 @@
     :root {
         --primary-color: #3C50E0;
         --secondary-color: #80CAEE;
-        /* Default Dark Theme */
-        --bg-main: #1A222C;
-        --card-bg: #24303F;
-        --border-color: #2E3A47;
-        --text-color: #AEB7C0;
-        --title-color: #FFFFFF;
-        --input-bg: #1d2a39;
-    }
-
-    [data-theme="light"] {
+        
         --bg-main: #F1F5F9;
         --card-bg: #FFFFFF;
         --border-color: #E2E8F0;
@@ -60,12 +51,6 @@
 
     .nav-link:hover,
     .nav-link.active {
-        background-color: #333A48;
-        color: white;
-    }
-
-    [data-theme="light"] .nav-link:hover,
-    [data-theme="light"] .nav-link.active {
         background-color: #F8FAFC;
         color: var(--primary-color);
     }
@@ -125,15 +110,10 @@
 
     /* Table Styles */
     table thead th {
-        background-color: #313D4A;
+        background-color: #F8FAFC;
         padding: 16px;
         text-align: left;
         font-size: 14px;
-        color: white;
-    }
-
-    [data-theme="light"] table thead th {
-        background-color: #F8FAFC;
         color: #475569;
     }
 
@@ -194,13 +174,14 @@
     }
 
     /* Logo Theme Binding */
-    [data-theme="light"] .logo-text,
-    [data-theme="light"] .logo-box {
+    /* Universal Logo Style */
+    .logo-text,
+    .logo-box {
         color: #1A222C !important;
         border-color: #1A222C !important;
     }
 
-    [data-theme="light"] .logo-mu {
+    .logo-mu {
         color: #1A222C !important;
     }
 
@@ -318,20 +299,8 @@
 
 <!-- Sidebar -->
 <div class="sidebar px-6 py-10">
-    <div class="mb-12 flex items-center group cursor-pointer">
-        <!-- Square Box for Nμ -->
-        <div
-            class="flex items-center justify-center border-[1.5px] border-white w-[42px] h-[42px] transition-colors group-hover:border-white/70 logo-box">
-            <span
-                class="font-sans text-[24px] font-medium leading-none tracking-tight flex items-baseline text-white logo-text">
-                N<span class="text-[18px] ml-[0.5px] logo-mu">μ</span>
-            </span>
-        </div>
-        <!-- Omics text outside -->
-        <span
-            class="font-sans text-[24px] font-normal tracking-tight ml-2.5 pr-2 transition-colors text-white group-hover:text-white/80 logo-text">
-            Omics
-        </span>
+    <div class="mb-12 flex items-center group cursor-pointer h-12">
+        <img src="/assets/nuomics_ai/images/logo.png" alt="NuOmics" class="h-full w-auto object-contain">
     </div>
 
     <nav>
@@ -371,26 +340,13 @@
     <!-- Header/Top Bar -->
     <div class="header">
         <div class="flex items-center gap-4">
-            <h2 class="text-xl font-semibold text-white logo-text">Organization Dashboard</h2>
+            <h2 class="text-xl font-semibold text-slate-800 logo-text">Organization Dashboard</h2>
             <span
                 class="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 text-sm font-bold rounded-full border border-indigo-500/20 uppercase tracking-widest">{{
                 reg.organization_name }}</span>
             <input type="hidden" id="internal-reg-id" value="{{ reg.name }}">
         </div>
         <div class="flex items-center gap-6">
-            <!-- Theme Toggle -->
-            <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-toggle">
-                <svg id="moon-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
-                    </path>
-                </svg>
-                <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
-                    </path>
-                </svg>
-            </button>
 
             <div class="flex items-center gap-4">
                 {% set current_user = frappe.get_doc("User", frappe.session.user) %}
@@ -400,7 +356,7 @@
                     <p class="text-[11px] text-slate-500">{{ current_user.email }}</p>
                 </div>
                 <div
-                    class="w-10 h-10 rounded-full bg-[#333A48] flex items-center justify-center font-bold text-white border border-slate-700">
+                    class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-white border border-indigo-700">
                     {{ (current_user.full_name or current_user.name)[0] | upper }}{{ (current_user.full_name or
                     current_user.name).split(' ')[1][0] | upper if ' ' in (current_user.full_name or current_user.name)
                     else "" }}
@@ -429,7 +385,7 @@
         <!-- Members Table -->
         <div class="lg:col-span-2">
             <div class="stat-card !p-0 overflow-hidden">
-                <div class="p-6 flex justify-between items-center border-bottom border-slate-700">
+                <div class="p-6 flex justify-between items-center border-b border-slate-100">
                     <h3 class="font-bold dynamic-text">Active Members</h3>
                     <button onclick="loadMembers()"
                         class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">Refresh</button>
@@ -478,7 +434,7 @@
                 <input type="file" id="csv_input" class="hidden" accept=".csv">
                 <div class="flex flex-col gap-3">
                     <button onclick="document.getElementById('csv_input').click()"
-                        class="w-full py-2 border border-dashed border-slate-600 rounded-md text-xs font-semibold hover:border-indigo-500 hover:text-white transition-all text-slate-400">
+                        class="w-full py-2 border border-dashed border-slate-300 rounded-md text-xs font-semibold hover:border-indigo-500 hover:text-indigo-600 transition-all text-slate-500">
                         Choose CSV File
                     </button>
                     <div id="csv_info"
@@ -529,34 +485,8 @@
         }
     });
 
-    // Theme Management
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const targetTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', targetTheme);
-        localStorage.setItem('nu_dashboard_theme', targetTheme);
-        updateThemeIcons(targetTheme);
-    }
-
-    function updateThemeIcons(theme) {
-        const moon = document.getElementById('moon-icon');
-        const sun = document.getElementById('sun-icon');
-
-        if (!moon || !sun) return; // Exit if icons are missing (e.g., Error screens)
-
-        if (theme === 'light') {
-            moon.classList.add('hidden');
-            sun.classList.remove('hidden');
-        } else {
-            sun.classList.add('hidden');
-            moon.classList.remove('hidden');
-        }
-    }
-
-    // Initialize Theme
-    const savedTheme = localStorage.getItem('nu_dashboard_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    window.addEventListener('DOMContentLoaded', () => updateThemeIcons(savedTheme));
+    // Theme initialization (forced light)
+    document.documentElement.setAttribute('data-theme', 'light');
 
     function logoutUser() {
         // Must use POST as per recent security updates
@@ -673,7 +603,7 @@
         let activeCount = 0;
 
         if (users.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-slate-600 italic">No members yet.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-slate-400 italic">No members yet.</td></tr>`;
         }
 
         users.forEach(u => {
@@ -689,7 +619,7 @@
             const adminBadge = isAdmin ? `<span class="ml-2 px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[9px] font-bold rounded border border-indigo-500/30 uppercase tracking-tighter align-middle">Admin</span>` : '';
 
             tbody.innerHTML += `
-                <tr class="hover:bg-[#2e3a4755]">
+                <tr class="hover:bg-slate-50 transition-colors">
                     <td class="dynamic-text font-medium">${u.name}${adminBadge}</td>
                     <td class="text-slate-500 font-normal">${u.email}</td>
                     <td><span class="badge ${badgeClass}">${u.status}</span></td>

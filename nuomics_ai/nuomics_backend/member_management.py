@@ -3,6 +3,8 @@ from frappe import _
 import csv
 import base64
 from nuomics_ai.nuomics_backend.security import validate_org_access
+from nuomics_ai.nuomics_backend.utils import register_external_user,trigger_password_reset_email
+
 
 @frappe.whitelist()
 def get_user_capacity(registration_id):
@@ -35,6 +37,8 @@ def get_user_capacity(registration_id):
         return int(capacity_str.strip())
     except (ValueError, TypeError):
         return 5 
+
+
 
 @frappe.whitelist()
 def add_org_user(registration_id, name, email):
@@ -78,13 +82,13 @@ def add_org_user(registration_id, name, email):
         else:
             return {"status": "error", "message": f"User with email {email} is already registered in another organization."}
 
+
+
 @frappe.whitelist()
 def upload_org_users_csv(registration_id, file_url):
     validate_org_access(registration_id)
     if file_url.startswith("/files/"):
         file_path = frappe.get_site_path("public", file_url.lstrip("/"))
-    elif file_url.startswith("/private/files/"):
-        file_path = frappe.get_site_path(file_url.lstrip("/"))
     else:
         file_path = frappe.get_site_path(file_url.lstrip("/"))
     capacity = get_user_capacity(registration_id)
@@ -148,6 +152,8 @@ def upload_org_users_csv(registration_id, file_url):
         
     return {"status": "success", "message": final_msg}
 
+
+
 @frappe.whitelist()
 def upload_csv_base64(registration_id, filename, filedata):
     validate_org_access(registration_id)
@@ -170,56 +176,76 @@ def upload_csv_base64(registration_id, filename, filedata):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+
+
 @frappe.whitelist()
 def update_member_status(registration_id, email, status):
     validate_org_access(registration_id)
+
     if not registration_id or not email or not status:
         return {"status": "error", "message": "Missing required information"}
-        
+
     if status not in ["Approved", "Rejected", "Pending Approval"]:
         return {"status": "error", "message": "Invalid status value"}
 
-    org_data = frappe.db.get_value("User Registration", registration_id, ["approval_status", "work_email"], as_dict=True)
-    org_status = org_data.get("approval_status")
-    org_admin_email = org_data.get("work_email")
+    # Check org approval
+    org_status = frappe.db.get_value("User Registration", registration_id, "approval_status")
+    if status == "Approved" and org_status != "Approved":
+        return {"status": "error", "message": "Cannot enable a member while the organization is disabled."}
 
-    if status == "Approved":
-        if org_status != "Approved":
-            return {"status": "error", "message": "Cannot enable a member while the organization is disabled."}
-            
-        # Check if the primary Organization Admin is enabled
-        admin_enabled = frappe.db.get_value("User", org_admin_email, "enabled")
-        if admin_enabled == 0:
-            return {"status": "error", "message": "Cannot enable a member while the primary organization admin is disabled."}
+    org_doc = frappe.get_doc("User Registration", registration_id)
 
+    old_status = None
+    for m in org_doc.members:
+        if m.email == email:
+            old_status = m.status
+            break
 
+    if old_status is None:
+        return {"status": "error", "message": "Member not found in your organization record."}
+
+    # Update user enable/disable
     if frappe.db.exists("User", email):
         u = frappe.get_doc("User", email)
         was_disabled = not u.enabled
         u.enabled = 1 if status == "Approved" else 0
-        if status == "Approved":
-            u.send_welcome_email = 1
         u.save(ignore_permissions=True)
-        
-        if status == "Approved" and was_disabled:
-            u.reset_password(send_email=True)
-            
-    org_doc = frappe.get_doc("User Registration", registration_id)
-    user_found = False
+
+    # ✅ ONLY on transition → Approved
+    if old_status != "Approved" and status == "Approved":
+        frappe.log_error(f"[MEMBER APPROVED] {email}", "DEBUG")
+
+        if frappe.db.exists("User", email):
+            u = frappe.get_doc("User", email)
+
+            # Send email
+            # if was_disabled:
+            #     u.send_welcome_mail_to_user()
+
+            # Call external
+            try:
+                full_name = u.full_name or email
+                register_external_user(email, full_name)
+                trigger_password_reset_email(email)
+
+            except Exception as e:
+                frappe.log_error(str(e), "Nuomics Error")
+
+    # Update child table
     for m in org_doc.members:
         if m.email == email:
             m.status = status
-            user_found = True
             break
-            
-    if user_found:
-        org_doc.save(ignore_permissions=True)
-        frappe.db.commit()
-        msg = f"User {email} has been {'enabled and approved. An email has been sent to the email.' if status == 'Approved' else 'disabled and rejected.'}"
-        return {"status": "success", "message": msg}
 
-    else:
-        return {"status": "error", "message": "Member not found in your organization record."}
+    org_doc.save(ignore_permissions=True)
+    frappe.db.commit()
+
+    return {
+        "status": "success",
+        "message": f"User {email} has been {'approved' if status == 'Approved' else 'updated'}."
+    }
+
+
 
 @frappe.whitelist()
 def toggle_org_user_admin(registration_id, email, is_admin):
@@ -270,6 +296,8 @@ def toggle_org_user_admin(registration_id, email, is_admin):
         return {"status": "success", "message": f"User admin status {'enabled' if int(is_admin) == 1 else 'disabled'}."}
     else:
         return {"status": "error", "message": "Member not found in your organization record."}
+
+
 
 @frappe.whitelist()
 def get_org_users(registration_id):

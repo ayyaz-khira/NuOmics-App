@@ -93,11 +93,11 @@ permission_query_conditions = {
 website_route_rules = [
     {
         "from_route": "/home", "to_route": "dashboard"
-    },
-    {
-        "from_route": "/update-password", "to_route": "auth/update-password"
     }
 ]
+
+
+
 
 # Request Hooks
 # -------------

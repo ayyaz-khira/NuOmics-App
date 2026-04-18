@@ -38,22 +38,32 @@ def get_user_permission_query(user=None):
         # Fallback to only seeing self in case of any issues during login phase
         return "(`tabUser`.name = '{0}')".format(frappe.db.escape(user))
 
+def get_dashboard_url_for_user(user):
+    """Returns the appropriate dashboard URL based on user roles."""
+    if user == "Administrator":
+        return "/admin/dashboard"
+
+    roles = frappe.get_roles(user)
+    
+    if "System Manager" in roles:
+        return "/admin/dashboard"
+    
+    if "Organization Admin" in roles:
+        return "/dashboard"
+    
+    # Default for regular members
+    return "http://live.nuomics.io"
+
 def validate_org_admin_route():
     """
     Restricts non-manager users from administrative routes and 
     sandboxes 'Organization Admin' users to specific allowed paths.
     """
-    path = frappe.request.path.strip("/")
+    path = (frappe.request.path or "").strip("/")
     
     # Always allow essential system assets and API calls
     if any(path.startswith(p) for p in ["api/", "assets/", "files/", "private/", "socket.io"]):
         return
-
-    # Strictly protect the update-password route: must have a key parameter
-    if path == "update-password":
-        if not frappe.form_dict.get('key'):
-            frappe.local.status_code = 404
-            raise frappe.PageDoesNotExistError
 
     if frappe.session.user == "Guest":
         return
@@ -90,9 +100,6 @@ def validate_super_admin():
         frappe.throw(_("Not authorized - Super Admin only"), frappe.PermissionError)
 
 def redirect_after_login(login_manager):
-    # CRITICAL: During the on_login hook, frappe.session.user might still technically be "Guest"
-    # because the session hasn't been finalized yet. 
-    # login_manager.user precisely holds the authenticated user.
     user = login_manager.user
 
     # Create Login Alert
@@ -106,33 +113,9 @@ def redirect_after_login(login_manager):
         }).insert(ignore_permissions=True)
         frappe.db.commit()
 
-    # Administrator and System Managers should go to the Admin Dashboard
-    if user == "Administrator" or "System Manager" in frappe.get_roles(user):
-        target = "/admin/dashboard"
-        frappe.local.response["redirect_to"] = target
-        frappe.local.response["message"] = target
-        return
-
-    roles = frappe.get_roles(user)
-
-    # Route System Managers to the new Ecosystem Admin Dashboard
-    if "System Manager" in roles:
-        target = "/admin/dashboard"
-        frappe.cache.hset("redirect_after_login", user, target)
-        frappe.local.response["redirect_to"] = target
-        frappe.local.response["message"] = target
-        return
-
-    # Route Organization Admins to their specific portal dashboard
-    if "Organization Admin" in roles:
-        target = "/dashboard"
-        frappe.cache.hset("redirect_after_login", user, target)
-        frappe.local.response["redirect_to"] = target
-        frappe.local.response["message"] = target
-        return
-
-    # Normal Organization Users (Members) are redirected to the live portal
-    target = "http://live.nuomics.io"
+    # Determine target based on roles
+    target = get_dashboard_url_for_user(user)
+    
     frappe.cache.hset("redirect_after_login", user, target)
     frappe.local.response["redirect_to"] = target
     frappe.local.response["message"] = target
