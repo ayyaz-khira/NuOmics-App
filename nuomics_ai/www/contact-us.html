@@ -10,8 +10,8 @@
 <style>
     body {
         font-family: 'Outfit', sans-serif !important;
-        background-color: #0c0e14 !important;
-        color: #f8fafc;
+        background-color: #f9fafb !important;
+        color: #1a202c;
         overflow-x: hidden;
         margin: 0;
         padding: 0;
@@ -24,76 +24,73 @@
         width: 100%;
         height: 100%;
         z-index: -2;
-        background-image: url('/assets/nuomics_ai/images/contact_bg.png');
-        background-size: cover;
-        background-position: center;
-        opacity: 0.8;
-        filter: brightness(0.5);
+        background-color: #f9fafb;
+        background-image:
+            radial-gradient(at 0% 0%, rgba(92, 185, 206, 0.05) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.05) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(92, 185, 206, 0.05) 0px, transparent 50%),
+            radial-gradient(at 0% 100%, rgba(168, 85, 247, 0.05) 0px, transparent 50%);
     }
 
     .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
         border-radius: 24px;
         transition: all 0.3s ease;
     }
 
     .glass-card:hover {
-        border-color: rgba(255, 255, 255, 0.15);
-        box-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.15);
+        border-color: rgba(92, 185, 206, 0.3);
+        box-shadow: 0 25px 50px -12px rgba(92, 185, 206, 0.1);
     }
 
     .input-field {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
+        background: #fdfdfd;
+        border: 1.5px solid #e2e8f0;
+        color: #1a202c;
         transition: all 0.2s ease;
     }
 
     .input-field:focus {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: #6366f1;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        border-color: #5CB9CE;
+        background: #fff;
         outline: none;
+        box-shadow: 0 0 0 4px rgba(92, 185, 206, 0.1);
     }
 
     select.input-field {
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
         background-position: right 0.75rem center;
         background-repeat: no-repeat;
         background-size: 1.5em 1.5em;
         padding-right: 2.5rem;
     }
 
-    /* Force options to be visible on dark background */
+    /* Remove the absolute black background forcing for options */
     option {
-        background-color: #0f172a;
-        color: white;
+        background-color: #ffffff;
+        color: #1a202c;
     }
 
     .submit-btn {
-        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        background: linear-gradient(135deg, #5CB9CE 0%, #4facbe 100%);
+        color: white;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        box-shadow: 0 10px 15px -3px rgba(92, 185, 206, 0.3);
     }
 
     .submit-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
-        filter: brightness(1.1);
+        box-shadow: 0 20px 25px -5px rgba(92, 185, 206, 0.4);
+        filter: brightness(1.05);
     }
 
     .section-title {
-        background: linear-gradient(to right, #ffffff, #94a3b8);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #0f172a;
     }
 
     /* Floating Animation */
@@ -115,66 +112,150 @@
         animation: float 6s ease-in-out infinite;
     }
 
-    /* FIX: Message Visibility (Ensures alerts and modals are not "camouflaged") */
-    .frappe-message-box,
-    .alert,
+    /* Universal Message Overrides to match Light Theme */
     .modal-content {
-        background-color: #1e293b !important;
-        /* Solid Dark Blue */
-        color: #f8fafc !important;
-        /* Bright White-Gray */
-        border: 1px solid #6366f1 !important;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+        background-color: #ffffff !important;
+        color: #1a202c !important;
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0,0,0,0.02) !important;
+        overflow: hidden !important;
+    }
+
+    .modal-content * {
+        color: #1e293b !important;
+        font-family: 'Outfit', 'Inter', sans-serif !important;
     }
 
     .modal-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-        padding-bottom: 0.5rem !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        padding: 1.75rem 1.75rem 1.25rem !important;
+        background-color: #ffffff !important;
     }
-
-    .modal-footer {
-        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-        justify-content: center !important;
-    }
-
+    
     .modal-title,
     .alert-title {
-        font-size: 1.5rem !important;
         font-weight: 700 !important;
-        color: #818cf8 !important;
-        /* Indigo text for title */
-        letter-spacing: -0.025em;
+        font-size: 1.35rem !important;
+        color: #0f172a !important;
+        letter-spacing: -0.01em !important;
     }
 
-    /* Style the Frappe button to match our theme */
+    /* Elegant Close Button */
+    button.close, .btn-close, .modal-header .btn-close, .modal-header .close {
+        opacity: 0.4 !important;
+        transition: opacity 0.2s ease, transform 0.2s ease !important;
+        background: transparent !important;
+        border: none !important;
+        color: #475569 !important;
+        font-size: 1.5rem !important;
+        padding: 0.5rem !important;
+        margin: -0.5rem -0.5rem -0.5rem auto !important;
+    }
+    
+    button.close:hover, .btn-close:hover, .modal-header .close:hover {
+        opacity: 1 !important;
+        transform: rotate(90deg) !important;
+        color: #0f172a !important;
+    }
+    
+    .modal-body,
+    .msgprint {
+        padding: 1.75rem !important;
+        font-size: 1.05rem !important;
+        color: #334155 !important;
+        line-height: 1.7 !important;
+        background: transparent !important;
+        border: none !important;
+    }
+    
+    .modal-footer {
+        border-top: none !important;
+        padding: 1rem 1.75rem 1.75rem !important;
+        background: #ffffff !important;
+        justify-content: flex-end !important;
+    }
+
+    /* Buttons inside Modals */
+    .frappe-message-box .btn-primary,
     .modal-footer .btn-primary,
-    .modal-footer .btn-default {
-        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+    .modal-footer .frappe-modal-action,
+    .modal-content .btn-primary {
+        background: linear-gradient(135deg, #5CB9CE 0%, #4facbe 100%) !important;
+        color: white !important;
         border: none !important;
         border-radius: 12px !important;
-        padding: 10px 30px !important;
+        padding: 0.75rem 2rem !important;
         font-weight: 600 !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
-        transition: all 0.3s ease !important;
+        font-size: 1rem !important;
+        box-shadow: 0 4px 12px rgba(92, 185, 206, 0.25) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
-    .modal-footer .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(99, 102, 241, 0.5) !important;
-        filter: brightness(1.1);
+    .frappe-message-box .btn-primary:hover,
+    .modal-footer .btn-primary:hover,
+    .modal-footer .frappe-modal-action:hover,
+    .modal-content .btn-primary:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 20px rgba(92, 185, 206, 0.35) !important;
+    }
+    
+    .frappe-message-box .btn-default,
+    .modal-footer .btn-default,
+    .modal-footer .btn-secondary,
+    .modal-footer .btn-modal-close,
+    .modal-content .btn-default {
+        background: #f8fafc !important;
+        color: #475569 !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 2rem !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        transition: all 0.2s ease !important;
     }
 
-    .modal-body {
-        font-size: 1.1rem !important;
-        line-height: 1.6 !important;
-        color: #94a3b8 !important;
-        padding: 2rem !important;
+    .frappe-message-box .btn-default:hover,
+    .modal-footer .btn-default:hover,
+    .modal-footer .btn-secondary:hover,
+    .modal-footer .btn-modal-close:hover,
+    .modal-content .btn-default:hover {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
     }
 
-    .modal-backdrop.show {
-        background-color: #020617 !important;
-        opacity: 0.9 !important;
+    /* Frappe Alerts Overrides */
+    .desk-alert, .alert {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 16px !important;
+        box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -5px rgba(0, 0, 0, 0.05) !important;
+        font-family: 'Outfit', 'Inter', sans-serif !important;
+        padding: 1.25rem 1.5rem !important;
+    }
+
+    .alert-message-container {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    
+    .alert-message {
+        color: #1e293b !important;
+        font-weight: 500 !important;
+        font-size: 1rem !important;
+    }
+
+    .indicator::before {
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.8), 0 0 0 3px currentColor !important;
+    }
+    .indicator-red::before {
+        color: #ef4444 !important;
+    }
+    .indicator-green::before {
+        color: #10b981 !important;
     }
 
     /* Override Frappe standard layout */
@@ -196,7 +277,7 @@
     <div class="w-full max-w-4xl">
         <div class="text-center mb-12 floating-element">
             <h1 class="text-5xl font-bold mb-4 section-title">Contact Us</h1>
-            <p class="text-slate-400 text-lg max-w-xl mx-auto">We'd love to hear from you. Fill out the form below and
+            <p class="text-slate-500 text-lg max-w-xl mx-auto">We'd love to hear from you. Fill out the form below and
                 we'll get back to you shortly.</p>
         </div>
 
@@ -204,21 +285,21 @@
             <form id="contact-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- First Name -->
                 <div class="flex flex-col gap-2">
-                    <label for="first_name" class="text-sm font-medium text-slate-300 ml-1">First Name</label>
+                    <label for="first_name" class="text-sm font-medium text-slate-500 ml-1">First Name</label>
                     <input type="text" id="first_name" name="first_name" class="input-field rounded-xl px-4 py-3 w-full"
                         placeholder="John" required>
                 </div>
 
                 <!-- Last Name -->
                 <div class="flex flex-col gap-2">
-                    <label for="last_name" class="text-sm font-medium text-slate-300 ml-1">Last Name</label>
+                    <label for="last_name" class="text-sm font-medium text-slate-500 ml-1">Last Name</label>
                     <input type="text" id="last_name" name="last_name" class="input-field rounded-xl px-4 py-3 w-full"
                         placeholder="Doe" required>
                 </div>
 
                 <!-- Organization Name -->
                 <div class="flex flex-col gap-2">
-                    <label for="organization_name" class="text-sm font-medium text-slate-300 ml-1">Organization
+                    <label for="organization_name" class="text-sm font-medium text-slate-500 ml-1">Organization
                         Name</label>
                     <input type="text" id="organization_name" name="organization_name"
                         class="input-field rounded-xl px-4 py-3 w-full" placeholder="Acme Corp" required>
@@ -226,7 +307,7 @@
 
                 <!-- Organization Type -->
                 <div class="flex flex-col gap-2">
-                    <label for="organization_type" class="text-sm font-medium text-slate-300 ml-1">Organization
+                    <label for="organization_type" class="text-sm font-medium text-slate-500 ml-1">Organization
                         Type</label>
                     <select id="organization_type" name="organization_type"
                         class="input-field rounded-xl px-4 py-3 w-full" required>
@@ -240,14 +321,14 @@
 
                 <!-- Work Email -->
                 <div class="flex flex-col gap-2">
-                    <label for="work_email" class="text-sm font-medium text-slate-300 ml-1">Work Email</label>
+                    <label for="work_email" class="text-sm font-medium text-slate-500 ml-1">Work Email</label>
                     <input type="email" id="work_email" name="work_email"
                         class="input-field rounded-xl px-4 py-3 w-full" placeholder="john@company.com" required>
                 </div>
 
                 <!-- Number of Users -->
                 <div class="flex flex-col gap-2">
-                    <label for="number_of_users" class="text-sm font-medium text-slate-300 ml-1">Number of Users</label>
+                    <label for="number_of_users" class="text-sm font-medium text-slate-500 ml-1">Number of Users</label>
                     <input type="number" id="number_of_users" name="number_of_users"
                         class="input-field rounded-xl px-4 py-3 w-full" placeholder="Ex: 10" min="1" value="1" required>
                 </div>
@@ -261,7 +342,7 @@
 
                 <!-- Contact Number -->
                 <div class="flex flex-col gap-2 md:col-span-2">
-                    <label for="contact_number" class="text-sm font-medium text-slate-300 ml-1">Contact Number</label>
+                    <label for="contact_number" class="text-sm font-medium text-slate-500 ml-1">Contact Number</label>
                     <div class="flex gap-3">
                         <select id="country_code" name="country_code"
                             class="input-field rounded-xl px-4 py-3 w-36 shrink-0" required>

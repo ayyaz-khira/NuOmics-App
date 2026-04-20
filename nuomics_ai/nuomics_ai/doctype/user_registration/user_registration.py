@@ -59,8 +59,11 @@ class UserRegistration(Document):
     def _sync_members(self):
         for member in self.get("members", []):
             if not member.user_ref:
-                member.user_ref = frappe.db.get_value("User", {"email": member.email})
-
+                resolved_user = frappe.db.get_value("User", {"email": member.email})
+                if resolved_user:
+                    member.user_ref = resolved_user
+                    if member.name:
+                        frappe.db.set_value("Org User Item", member.name, "user_ref", resolved_user)
             if member.status == "Approved":
                 if not member.user_ref:
                     new_user = frappe.get_doc({
@@ -74,22 +77,20 @@ class UserRegistration(Document):
                     })
                     new_user.insert(ignore_permissions=True)
                     member.user_ref = new_user.name
+                    if member.name:
+                        frappe.db.set_value("Org User Item", member.name, "user_ref", new_user.name)
                     register_external_user(member.email, member.name1 or member.email)
-                    trigger_password_reset_email(member.email)  
-                    frappe.msgprint(f"User {member.email} created.")
+                    trigger_password_reset_email(member.email)
                 else:
                     user = frappe.get_doc("User", member.user_ref)
                     if not user.enabled:
                         user.enabled = 1
                         user.send_welcome_email = 0
                         user.save(ignore_permissions=True)
-                        # user.send_welcome_mail_to_user()
-                        frappe.msgprint(f"User {member.email} has been approved and enabled.")
 
             elif member.status == "Rejected" and member.user_ref:
                 if frappe.db.get_value("User", member.user_ref, "enabled"):
                     frappe.db.set_value("User", member.user_ref, "enabled", 0)
-                    frappe.msgprint(f"User {member.email} has been rejected and disabled.")
 
     def _update_user_access(self, status):
         # 1. Main admin user access
@@ -141,13 +142,9 @@ class UserRegistration(Document):
             register_external_user(self.work_email, f"{self.first_name} {self.last_name}") 
             trigger_password_reset_email(self.work_email)
             new_user.add_roles("Organization Admin")
-            # new_user.send_welcome_mail_to_user()
-            frappe.msgprint(f"Core User account created for {self.work_email}")
         else:
             admin_user = frappe.get_doc("User", self.work_email)
             if not admin_user.enabled:
                 admin_user.enabled = 1
                 admin_user.organization = self.name
                 admin_user.save(ignore_permissions=True)
-                # admin_user.send_welcome_mail_to_user()
-                frappe.msgprint(f"User {self.work_email} has been approved and enabled.")

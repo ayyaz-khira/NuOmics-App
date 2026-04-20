@@ -242,7 +242,7 @@ def update_member_status(registration_id, email, status):
 
     return {
         "status": "success",
-        "message": f"User {email} has been {'approved' if status == 'Approved' else 'updated'}."
+        "message": f"User {email} has been {'approved' if status == 'Approved' else 'rejected'}."
     }
 
 

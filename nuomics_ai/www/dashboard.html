@@ -196,89 +196,149 @@
         max-width: 100% !important;
     }
 
-    /* UNIVERSAL MESSAGE FIX: High Contrast Alerts and Modals */
-    .modal-content,
-    .frappe-message-box,
-    .alert-message-container {
-        background-color: #1e293b !important;
-        border: 2px solid var(--primary-color) !important;
-        box-shadow: 0 0 100px rgba(0, 0, 0, 0.8) !important;
-        border-radius: 12px !important;
-        color: #ffffff !important;
-        z-index: 100000 !important;
+    /* Universal Message Overrides to match Light Theme */
+    .modal-content {
+        background-color: #ffffff !important;
+        color: #1a202c !important;
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0,0,0,0.02) !important;
+        overflow: hidden !important;
     }
 
-    /* Remove borders from internal containers to prevent nested lines */
-    .modal-body,
-    .msgprint,
-    .alert {
-        border: none !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        color: #ffffff !important;
+    .modal-content * {
+        color: #1e293b !important;
+        font-family: 'Outfit', 'Inter', sans-serif !important;
     }
 
-    /* Force all text in messages to be bright white */
-    .modal-content *,
-    .frappe-message-box *,
-    .alert-message-container * {
-        color: #ffffff !important;
-        letter-spacing: 0.01em;
+    .modal-header {
+        border-bottom: 1px solid #f1f5f9 !important;
+        padding: 1.75rem 1.75rem 1.25rem !important;
+        background-color: #ffffff !important;
     }
-
-    .modal-header,
-    .modal-footer {
-        border-color: rgba(255, 255, 255, 0.05) !important;
-        background-color: #1e293b !important;
-        padding: 1rem !important;
-    }
-
+    
     .modal-title,
     .alert-title {
-        color: #818cf8 !important;
         font-weight: 700 !important;
-        font-size: 1.25rem !important;
+        font-size: 1.35rem !important;
+        color: #0f172a !important;
+        letter-spacing: -0.01em !important;
     }
 
-    /* Style the buttons in the modal footer specifically */
-    .modal-footer .btn {
-        padding: 8px 24px !important;
+    /* Elegant Close Button */
+    button.close, .btn-close, .modal-header .btn-close, .modal-header .close {
+        opacity: 0.4 !important;
+        transition: opacity 0.2s ease, transform 0.2s ease !important;
+        background: transparent !important;
+        border: none !important;
+        color: #475569 !important;
+        font-size: 1.5rem !important;
+        padding: 0.5rem !important;
+        margin: -0.5rem -0.5rem -0.5rem auto !important;
+    }
+    
+    button.close:hover, .btn-close:hover, .modal-header .close:hover {
+        opacity: 1 !important;
+        transform: rotate(90deg) !important;
+        color: #0f172a !important;
+    }
+    
+    .modal-body,
+    .msgprint {
+        padding: 1.75rem !important;
+        font-size: 1.05rem !important;
+        color: #334155 !important;
+        line-height: 1.7 !important;
+        background: transparent !important;
+        border: none !important;
+    }
+    
+    .modal-footer {
+        border-top: none !important;
+        padding: 1rem 1.75rem 1.75rem !important;
+        background: #ffffff !important;
+    }
+
+    /* Buttons inside Modals */
+    .frappe-message-box .btn-primary,
+    .modal-footer .btn-primary,
+    .modal-footer .frappe-modal-action,
+    .modal-content .btn-primary {
+        background: linear-gradient(135deg, #5CB9CE 0%, #4facbe 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 2rem !important;
         font-weight: 600 !important;
-        border-radius: 6px !important;
+        font-size: 1rem !important;
+        box-shadow: 0 4px 12px rgba(92, 185, 206, 0.25) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .frappe-message-box .btn-primary:hover,
+    .modal-footer .btn-primary:hover,
+    .modal-footer .frappe-modal-action:hover,
+    .modal-content .btn-primary:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 20px rgba(92, 185, 206, 0.35) !important;
+    }
+    
+    .frappe-message-box .btn-default,
+    .modal-footer .btn-default,
+    .modal-footer .btn-secondary,
+    .modal-footer .btn-modal-close,
+    .modal-content .btn-default {
+        background: #f8fafc !important;
+        color: #475569 !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 2rem !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
         transition: all 0.2s ease !important;
     }
 
-    /* "Yes" / Primary Button */
-    .modal-footer .btn-primary,
-    .modal-footer .frappe-modal-action {
-        background-color: #6366f1 !important;
-        /* Indigo 500 */
-        color: #ffffff !important;
-        border: none !important;
-        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2) !important;
-    }
-
-    .modal-footer .btn-primary:hover {
-        background-color: #4f46e5 !important;
-        /* Indigo 600 */
-        transform: translateY(-1px) !important;
-    }
-
-    /* "No" / Close / Secondary Button */
-    .modal-footer .btn-default,
-    .modal-footer .btn-secondary,
-    .modal-footer .btn-modal-close {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-        color: #94a3b8 !important;
-        /* Slate 400 */
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    }
-
+    .frappe-message-box .btn-default:hover,
     .modal-footer .btn-default:hover,
-    .modal-footer .btn-secondary:hover {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        color: #f1f5f9 !important;
-        /* Slate 100 */
+    .modal-footer .btn-secondary:hover,
+    .modal-footer .btn-modal-close:hover,
+    .modal-content .btn-default:hover {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+    }
+
+    /* Frappe Alerts Overrides */
+    .desk-alert, .alert {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 16px !important;
+        box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -5px rgba(0, 0, 0, 0.05) !important;
+        font-family: 'Outfit', 'Inter', sans-serif !important;
+        padding: 1.25rem 1.5rem !important;
+    }
+
+    .alert-message-container {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    
+    .alert-message {
+        color: #1e293b !important;
+        font-weight: 500 !important;
+        font-size: 1rem !important;
+    }
+
+    .indicator::before {
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.8), 0 0 0 3px currentColor !important;
+    }
+    .indicator-red::before {
+        color: #ef4444 !important;
+    }
+    .indicator-green::before {
+        color: #10b981 !important;
     }
 </style>
 {% endblock %}
