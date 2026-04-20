@@ -89,19 +89,14 @@ permission_query_conditions = {
 
 # Website Route Rules
 # -------------------
-
 website_route_rules = [
-    {
-        "from_route": "/home", "to_route": "dashboard"
-    }
+    {"from_route": "/home", "to_route": "dashboard"},
+    {"from_route": "/update-password", "to_route": "auth/update-password"}  
 ]
-
 
 
 
 # Request Hooks
 # -------------
-
 on_login = "nuomics_ai.nuomics_backend.api.redirect_after_login"
-before_request = ["nuomics_ai.nuomics_backend.api.validate_org_admin_route"]
-
+before_request = ["nuomics_ai.nuomics_backend.security.validate_org_admin_route"]  # changed api → security

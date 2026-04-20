@@ -1,5 +1,4 @@
 {% extends "templates/web.html" %}
-
 {% block navbar %}{% endblock %}
 {% block footer %}{% endblock %}
 
@@ -72,6 +71,48 @@
         letter-spacing: -0.05em;
     }
 
+    .countdown-banner {
+        background: #edf2f7;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        margin: 2rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        text-align: left;
+    }
+
+    .timer-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 2px solid #5CB9CE;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #5CB9CE;
+        font-weight: 700;
+        font-size: 1.25rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .redirect-text {
+        font-size: 14px;
+        color: #4a5568;
+        font-weight: 500;
+        line-height: 1.4;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .redirect-text b {
+        color: #1a202c;
+    }
+
     .btn-primary {
         background: linear-gradient(135deg, #5CB9CE 0%, #4facbe 100%);
         color: white;
@@ -80,10 +121,13 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        font-size: 0.875rem;
         transition: all 0.3s ease;
         box-shadow: 0 10px 15px -3px rgba(92, 185, 206, 0.3);
         display: inline-block;
         width: 100%;
+        border: none;
+        cursor: pointer;
     }
 
     .btn-primary:hover {
@@ -100,21 +144,89 @@
 
 {% block content %}
 <div class="bg-light-mesh"></div>
-
 <div class="main-wrapper px-4">
     <div class="error-card mx-auto">
         <div class="error-code">404</div>
         <h1 class="text-2xl font-bold text-slate-900 mb-3">Page Not Found</h1>
-        <p class="text-muted mb-8 leading-relaxed">
+        <p class="text-muted mb-2 leading-relaxed">
             The resource you're looking for doesn't exist or is currently restricted.
         </p>
 
-        <div class="space-y-4">
-            <a href="/" class="btn-primary">
-                Return Home
-            </a>
+        <div class="countdown-banner">
+            <div class="timer-circle">
+                <span id="countdown">10</span>
+            </div>
+            <p class="redirect-text">
+                <span class="text-slate-700">Redirecting to <b><span id="target-page-name">Previous</span></b></span>
+                <span class="text-slate-500 text-[13px]">page in <b><span id="text-countdown">10</span>
+                        seconds</b></span>
+            </p>
+        </div>
 
+        <div class="space-y-4">
+            <button id="action-btn" class="btn-primary">
+                Return to Previous Page
+            </button>
+            <p class="text-[10px] text-slate-400 uppercase tracking-[0.3em] pt-4 font-bold">
+                NuOmics Security Protocol
+            </p>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    frappe.ready(() => {
+        const actionBtn = document.getElementById('action-btn');
+        const targetPageDisplay = document.getElementById('target-page-name');
+        const countdownElem = document.getElementById('countdown');
+        const textCountdownElem = document.getElementById('text-countdown');
+
+        const ref = document.referrer;
+        const roles = frappe.user_roles || [];
+        const isAdmin = roles.includes("System Manager") || frappe.session.user === "Administrator";
+
+        let targetName = "Previous";
+        let targetUrl = "/login";
+
+        if (ref && ref.includes(window.location.host) && !ref.includes('/404')) {
+            if (ref.includes('/admin/dashboard')) targetName = "Admin Dashboard";
+            else if (ref.includes('/dashboard')) targetName = "Dashboard";
+            else if (ref.includes('/login')) targetName = "Login";
+            else targetName = "Previous";
+            targetUrl = ref;
+        } else {
+            if (window.frappe && frappe.session.user !== "Guest") {
+                if (isAdmin) {
+                    targetName = "Admin Dashboard";
+                    targetUrl = "/admin/dashboard";
+                } else {
+                    targetName = "Dashboard";
+                    targetUrl = "/dashboard";
+                }
+            } else {
+                targetName = "Login";
+                targetUrl = "/login";
+            }
+        }
+
+        if (targetPageDisplay) targetPageDisplay.innerText = targetName;
+        if (actionBtn) {
+            actionBtn.innerText = "Return to " + targetName;
+            actionBtn.onclick = () => window.location.href = targetUrl;
+        }
+
+        let seconds = 10;
+        const timer = setInterval(() => {
+            seconds--;
+            if (countdownElem) countdownElem.innerText = seconds;
+            if (textCountdownElem) textCountdownElem.innerText = seconds;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = targetUrl;
+            }
+        }, 1000);
+    });
+</script>
 {% endblock %}

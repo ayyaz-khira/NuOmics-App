@@ -4,7 +4,8 @@ import requests
 
 def get_api_settings():
     """Helper to fetch NuOmics API settings."""
-    settings = frappe.get_doc("NuOmics API Settings", "83euurvrhd")
+    settings = frappe.get_single("NuOmics Settings")
+
     if not settings.url:
         frappe.throw(_("Nuomics API URL not configured"))
     return settings

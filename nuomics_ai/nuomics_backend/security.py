@@ -55,43 +55,65 @@ def get_dashboard_url_for_user(user):
     return "http://live.nuomics.io"
 
 def validate_org_admin_route():
-    """
-    Restricts non-manager users from administrative routes and 
-    sandboxes 'Organization Admin' users to specific allowed paths.
-    """
     path = (frappe.request.path or "").strip("/")
-    
-    # Always allow essential system assets and API calls
-    if any(path.startswith(p) for p in ["api/", "assets/", "files/", "private/", "socket.io"]):
+
+    # 1. Bypass static/system paths
+    if any(path.startswith(p) for p in [
+        "api/", "assets/", "files/", "private/", "socket.io",
+        "_/", "app/", "web_form/"
+    ]):
         return
+
+    # 2. Always allow login
+    if path in ("login", "auth/login"):
+        return
+
+    # 3. Protect update-password — must have key param
+    if path in ("update-password", "auth/update-password"):
+        if not frappe.form_dict.get("key"):
+            frappe.local.flags.redirect_location = "/404"
+            frappe.local.response["type"] = "redirect"
+            frappe.local.response["location"] = "/404"
+            return
 
     if frappe.session.user == "Guest":
         return
-    
+
     roles = frappe.get_roles()
     is_manager = "System Manager" in roles or frappe.session.user == "Administrator"
-    
-    # 1. Absolute Block: Non-managers cannot see ANY route with 'admin' in the name
-    if not is_manager and "admin" in path:
-        frappe.local.status_code = 404
-        raise frappe.PageDoesNotExistError
 
-    # 2. Role Sandbox: Organization Admins are restricted to a specific whitelist
+    # 4. Block admin routes for non-managers
+    if not is_manager and ("admin/" in path or path.startswith("admin")):
+        frappe.local.flags.redirect_location = "/404"
+        frappe.local.response["type"] = "redirect"
+        frappe.local.response["location"] = "/404"
+        return
+
+    # 5. Sandbox Organization Admins
     if "Organization Admin" in roles and not is_manager:
         allowed_routes = [
-            "", "dashboard", "contact-us", "login", "helpdesk", 
-            "logout", "me", "error", "404", "home", "update-password"
+            "", "dashboard", "contact-us", "login", "helpdesk",
+            "logout", "me", "error", "404", "home",
+            "update-password", "auth/update-password", "not-found"
         ]
-        
+
         is_allowed = False
         for r in allowed_routes:
-            if path == r or path.startswith(r + "/"):
+            if r == "dashboard":
+                if path == "dashboard":  # exact match — blocks /dashboard/ll
+                    is_allowed = True
+                    break
+            elif path == r or path.startswith(r + "/"):
                 is_allowed = True
                 break
-        
+
         if not is_allowed:
-            frappe.local.status_code = 404
-            raise frappe.PageDoesNotExistError
+            frappe.local.flags.redirect_location = "/404"
+            frappe.local.response["type"] = "redirect"
+            frappe.local.response["location"] = "/404"
+            return
+
+
 
 def validate_super_admin():
     if frappe.session.user == "Guest":
